@@ -213,23 +213,35 @@ function MessengerApp() {
           <div className="card shadow-elevation-2 p-5 border-border">
             <h2 className="font-semibold text-text mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <button className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors">
+              <button
+                className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors relative"
+                onClick={() => alert("This feature is coming soon!")}
+              >
                 <div className="bg-gradient-primary p-2 rounded-lg mb-2">
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium">New Chat</span>
+                <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-primary text-white rounded-full">Soon</span>
               </button>
-              <button className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors">
+              <button
+                className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors relative"
+                onClick={() => alert("This feature is coming soon!")}
+              >
                 <div className="bg-gradient-secondary p-2 rounded-lg mb-2">
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium">My Contacts</span>
+                <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-secondary text-white rounded-full">Soon</span>
               </button>
-              <button className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors">
+              <button
+                className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors relative"
+                onClick={() => alert("This feature is coming soon!")}
+              >
                 <div className="bg-gradient-tertiary p-2 rounded-lg mb-2">
                   <MessageCircle className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium">Messages</span>
+                <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-tertiary text-white rounded-full">Soon</span>
               </button>
             </div>
           </div>
