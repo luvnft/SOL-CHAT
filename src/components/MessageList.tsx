@@ -15,12 +15,12 @@ export const MessageList: React.FC<Props> = ({ messages, currentWallet }) => {
       case 'sent':
         return <Clock className="w-3 h-3" />;
       case 'delivered':
-        return <CheckCircle className="w-3 h-3 text-blue-500" />;
+        return <CheckCircle className="w-3 h-3 text-primary" />;
       case 'read':
         return (
           <div className="flex -space-x-1">
-            <CheckCircle className="w-3 h-3 text-blue-500" />
-            <CheckCircle className="w-3 h-3 text-blue-500" />
+            <CheckCircle className="w-3 h-3 text-primary" />
+            <CheckCircle className="w-3 h-3 text-primary" />
           </div>
         );
     }
@@ -63,8 +63,8 @@ export const MessageList: React.FC<Props> = ({ messages, currentWallet }) => {
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4 relative">
       {messages.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full text-gray-500">
-          <MessageSquare className="w-12 h-12 mb-2" />
+        <div className="flex flex-col items-center justify-center h-full text-text-muted">
+          <img src="/logo.png" alt="SOL-CHAT Logo" className="w-24 h-auto mb-4 opacity-50" />
           <p>No messages yet. Start a conversation!</p>
         </div>
       ) : (
@@ -76,10 +76,10 @@ export const MessageList: React.FC<Props> = ({ messages, currentWallet }) => {
             }`}
           >
             <div
-              className={`max-w-[70%] rounded-lg p-3 ${
+              className={`max-w-[70%] rounded-lg p-3 shadow-sm animate-fade-in ${
                 message.sender === currentWallet
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100'
+                  ? 'bg-gradient-tertiary text-white'
+                  : 'bg-card-highlight border border-border'
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
@@ -93,13 +93,13 @@ export const MessageList: React.FC<Props> = ({ messages, currentWallet }) => {
                   </span>
                 )}
               </div>
-              
+
               {message.content && (
                 <p className="break-words whitespace-pre-wrap">{message.content}</p>
               )}
-              
+
               {message.fileUrl && renderFilePreview(message.fileUrl, message.fileName)}
-              
+
               <div className="flex items-center justify-between mt-2 text-xs opacity-75">
                 <span>
                   {new Date(message.timestamp).toLocaleTimeString()}
@@ -115,21 +115,25 @@ export const MessageList: React.FC<Props> = ({ messages, currentWallet }) => {
 
       {/* Image Preview Modal */}
       {expandedImage && (
-        <div 
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 animate-fade-in"
           onClick={() => setExpandedImage(null)}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh]">
+          <div className="relative max-w-[90vw] max-h-[90vh] animate-bounce-in">
             <button
-              onClick={() => setExpandedImage(null)}
-              className="absolute -top-4 -right-4 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedImage(null);
+              }}
+              className="absolute -top-4 -right-4 p-2 bg-card-highlight rounded-full shadow-elevation-2 hover:bg-opacity-80 transition-colors border border-border"
+              aria-label="Close preview"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 text-text" />
             </button>
             <img
               src={expandedImage}
               alt="Preview"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-elevation-3 border border-border"
             />
           </div>
         </div>

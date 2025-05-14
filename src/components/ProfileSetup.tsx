@@ -44,7 +44,7 @@ export const ProfileSetup: React.FC<Props> = ({ publicKey, onComplete }) => {
         username: username.trim(),
         updatedAt: Date.now(),
       };
-      
+
       await saveProfile(profile);
       onComplete();
     } catch (err) {
@@ -54,26 +54,35 @@ export const ProfileSetup: React.FC<Props> = ({ publicKey, onComplete }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="flex flex-col items-center mb-8">
+        <img src="/logo.png" alt="SOL-CHAT Logo" className="w-32 h-auto mb-4" />
+        <h1 className="text-4xl font-bold text-text mb-2">
+          SOL-CHAT
+        </h1>
+        <p className="text-text-muted">
+          Secure messaging on Solana
+        </p>
+      </div>
+
+      <div className="card p-8 max-w-md w-full shadow-elevation-2 animate-fade-in border-border">
         <div className="text-center mb-6">
-          <UserCircle className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900">Set Your Username</h2>
-          <p className="text-gray-600 mt-2">
+          <h2 className="text-2xl font-bold text-text">Set Your Username</h2>
+          <p className="text-text-muted mt-2">
             Choose a username that other users will see when you message them.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="username" className="block text-sm font-medium text-text">
               Username
             </label>
             <input
@@ -81,17 +90,17 @@ export const ProfileSetup: React.FC<Props> = ({ publicKey, onComplete }) => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className={`mt-1 block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                error ? 'border-red-500' : 'border-gray-300'
+              className={`input mt-1 bg-card-highlight border-border ${
+                error ? 'border-error focus:ring-error/50' : ''
               }`}
               placeholder="Enter your username"
             />
-            {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+            {error && <p className="mt-1 text-sm text-error">{error}</p>}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full py-3 px-4 rounded-lg font-medium bg-gradient-tertiary text-white hover:opacity-90 transition-opacity"
           >
             Save Username
           </button>

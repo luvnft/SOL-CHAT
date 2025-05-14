@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { PublicKey } from '@solana/web3.js';
@@ -7,7 +7,8 @@ import { MessageInput } from './components/MessageInput';
 import { PeerList } from './components/PeerList';
 import { ProfileSetup } from './components/ProfileSetup';
 import { WalletContextProvider } from './components/WalletContextProvider';
-import { MessageCircle, Users } from 'lucide-react';
+import { ThemeToggle, useTheme } from './components/ThemeProvider';
+import { MessageCircle, Users, Loader2, X } from 'lucide-react';
 import { uploadFile, storeMessages, retrieveMessages } from './lib/storage';
 import { encryptMessage } from './lib/crypto';
 import { addRecentPeer, getRecentPeers, getAddressActivity } from './lib/peers';
@@ -19,7 +20,7 @@ function MessengerApp() {
   const { connection } = useConnection();
   const [messages, setMessages] = useState<Message[]>([]);
   const [lastCid, setLastCid] = useState<string | null>(null);
-  const [showPeers, setShowPeers] = useState(false);
+  const [showPeers, setShowPeers] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recentPeers, setRecentPeers] = useState<Peer[]>([]);
 
@@ -29,7 +30,7 @@ function MessengerApp() {
       if (publicKey) {
         const userProfile = await getLocalProfile();
         setProfile(userProfile);
-        
+
         const peers = await getRecentPeers();
         setRecentPeers(peers);
 
@@ -88,9 +89,15 @@ function MessengerApp() {
         fileName = file.name;
       }
 
+      // For demo purposes, we'll use a simplified approach
+      // In a real app, we would use proper key derivation
+      const messageSignature = await signMessage(new TextEncoder().encode('Sign to encrypt message'));
+
+      // Generate a deterministic key from the signature
+      // This is a simplified approach for demo purposes
       const { encrypted, nonce } = await encryptMessage(
         content,
-        await signMessage(new TextEncoder().encode('Sign to encrypt message')),
+        messageSignature,
         new PublicKey(recipientPublicKey)
       );
 
@@ -100,6 +107,7 @@ function MessengerApp() {
         senderUsername: profile.username,
         recipient: recipientPublicKey,
         content: content, // Store unencrypted for demo
+        encrypted, // Store encrypted version
         nonce,
         timestamp: Date.now(),
         fileUrl,
@@ -125,20 +133,34 @@ function MessengerApp() {
     }
   };
 
+  const { theme } = useTheme();
+
   if (!publicKey) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center space-y-6">
-          <div className="flex justify-center">
-            <MessageCircle className="w-16 h-16 text-blue-500" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Solana P2P Messenger
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center mb-8">
+          <img src="/logo.png" alt="SOL-CHAT Logo" className="w-32 h-auto mb-4" />
+          <h1 className="text-4xl font-bold text-text mb-2">
+            SOL-CHAT
           </h1>
-          <p className="text-gray-600">
+          <p className="text-text-muted">
+            Secure messaging on Solana
+          </p>
+        </div>
+
+        <div className="card p-8 max-w-md w-full text-center space-y-6 animate-fade-in shadow-elevation-2 border-border">
+          <h2 className="text-2xl font-bold text-text">
+            Welcome
+          </h2>
+          <p className="text-text-muted">
             Connect your wallet to start messaging securely with other users.
           </p>
-          <WalletMultiButton className="!bg-blue-500 hover:!bg-blue-600 transition-colors" />
+          <div className="flex justify-center">
+            <WalletMultiButton className="!bg-gradient-tertiary hover:opacity-90 transition-opacity !rounded-lg" />
+          </div>
+          <div className="absolute top-4 right-4">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     );
@@ -146,60 +168,111 @@ function MessengerApp() {
 
   if (!profile) {
     return (
-      <ProfileSetup
-        publicKey={publicKey.toString()}
-        onComplete={() => window.location.reload()}
-      />
+      <div className="min-h-screen bg-background">
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
+        <ProfileSetup
+          publicKey={publicKey.toString()}
+          onComplete={() => window.location.reload()}
+        />
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white shadow-sm p-4">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="bg-foreground shadow-sm p-4 border-b border-border">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <MessageCircle className="w-8 h-8 text-blue-500" />
-            <h1 className="text-xl font-bold text-gray-900">P2P Messenger</h1>
+            <img src="/logo.png" alt="SOL-CHAT Logo" className="h-8 w-auto" />
+            <h1 className="text-xl font-bold text-text">SOL-CHAT</h1>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
-              Logged in as: <span className="font-medium">{profile.username}</span>
-            </span>
+            <div className="hidden md:flex items-center space-x-2 bg-card-highlight px-3 py-1.5 rounded-lg">
+              <span className="text-sm text-text-muted">
+                <span className="font-medium text-text">{profile.username}</span>
+              </span>
+            </div>
             <button
               onClick={() => setShowPeers(!showPeers)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="btn-icon hover:bg-card-highlight rounded-lg"
+              aria-label="Show peers"
             >
-              <Users className="w-6 h-6 text-gray-600" />
+              <Users className="w-5 h-5 text-text-muted" />
             </button>
-            <WalletMultiButton className="!bg-blue-500 hover:!bg-blue-600 transition-colors" />
+            <ThemeToggle />
+            <WalletMultiButton className="!bg-gradient-tertiary hover:opacity-90 transition-opacity !rounded-lg" />
           </div>
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full my-4 flex gap-4 p-4">
-        <div className="flex-1 bg-white shadow-lg rounded-lg flex flex-col">
-          <MessageList 
-            messages={messages} 
-            currentWallet={publicKey.toString()} 
-          />
-          <MessageInput 
-            onSendMessage={handleSendMessage}
-            recentPeers={recentPeers}
-          />
-        </div>
-        
-        {showPeers && (
-          <div className="w-80 bg-white shadow-lg rounded-lg overflow-hidden">
-            <div className="p-4 bg-gray-50 border-b">
-              <h2 className="font-semibold text-gray-900">Recent Peers</h2>
+      <main className="flex-1 max-w-7xl mx-auto w-full my-6 flex flex-col md:flex-row gap-6 p-4">
+        <div className="flex-1 flex flex-col space-y-6">
+          {/* Quick Actions */}
+          <div className="card shadow-elevation-2 p-5 border-border">
+            <h2 className="font-semibold text-text mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors">
+                <div className="bg-gradient-primary p-2 rounded-lg mb-2">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-sm font-medium">New Chat</span>
+              </button>
+              <button className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors">
+                <div className="bg-gradient-secondary p-2 rounded-lg mb-2">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-sm font-medium">My Contacts</span>
+              </button>
+              <button className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors">
+                <div className="bg-gradient-tertiary p-2 rounded-lg mb-2">
+                  <MessageCircle className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-sm font-medium">Messages</span>
+              </button>
             </div>
-            <PeerList 
-              onSelectPeer={(peer) => {
-                setShowPeers(false);
-              }} 
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 card shadow-elevation-2 flex flex-col border-border">
+            <div className="p-4 border-b border-border">
+              <h2 className="font-semibold text-text">Messages</h2>
+            </div>
+            <MessageList
+              messages={messages}
+              currentWallet={publicKey.toString()}
+            />
+            <MessageInput
+              onSendMessage={handleSendMessage}
+              recentPeers={recentPeers}
             />
           </div>
-        )}
+        </div>
+
+        <div className={`w-full md:w-80 card shadow-elevation-2 overflow-hidden border-border ${showPeers ? 'animate-slide-in' : 'hidden'}`}>
+          <div className="p-4 bg-foreground border-b border-border">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <div className="bg-gradient-secondary p-1.5 rounded-lg">
+                  <Users className="w-4 h-4 text-white" />
+                </div>
+                <h2 className="font-semibold text-text">Recent Peers</h2>
+              </div>
+              <button
+                onClick={() => setShowPeers(false)}
+                className="md:hidden p-1 rounded-lg hover:bg-card-highlight"
+              >
+                <X className="w-5 h-5 text-text-muted" />
+              </button>
+            </div>
+          </div>
+          <PeerList
+            onSelectPeer={(peer) => {
+              setShowPeers(false);
+            }}
+          />
+        </div>
       </main>
     </div>
   );

@@ -108,11 +108,11 @@ export const RecipientInput: React.FC<Props> = ({ onRecipientSelect, recentPeers
 
   const handleSetNickname = async (publicKey: string) => {
     if (!nicknameInput.trim()) return;
-    
+
     await setPeerNickname(publicKey, nicknameInput.trim());
     setEditingNickname(null);
     setNicknameInput('');
-    
+
     if (input === publicKey) {
       setSelectedPeerUsername(nicknameInput.trim());
     }
@@ -148,8 +148,8 @@ export const RecipientInput: React.FC<Props> = ({ onRecipientSelect, recentPeers
           onFocus={() => setShowDropdown(true)}
           onKeyDown={handleKeyDown}
           placeholder="Enter Solana address or search peers..."
-          className={`w-full p-2 pr-20 border rounded-lg focus:outline-none focus:ring-2 ${
-            error ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+          className={`input pr-20 bg-card-highlight border-border ${
+            error ? 'border-error focus:ring-error/50' : ''
           }`}
           spellCheck={false}
           autoComplete="off"
@@ -158,30 +158,33 @@ export const RecipientInput: React.FC<Props> = ({ onRecipientSelect, recentPeers
           {input && (
             <button
               onClick={clearInput}
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1 hover:bg-card-highlight rounded-lg transition-colors"
               type="button"
+              aria-label="Clear input"
             >
-              <X className="w-4 h-4 text-gray-400" />
+              <X className="w-4 h-4 text-text-muted" />
             </button>
           )}
-          <Search className={`w-4 h-4 ${isValidating ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
+          <div className={`${isValidating ? 'bg-gradient-primary p-1 rounded-lg' : ''}`}>
+            <Search className={`w-4 h-4 ${isValidating ? 'text-white animate-pulse' : 'text-text-muted'}`} />
+          </div>
         </div>
       </div>
 
       {selectedPeerUsername && !error && (
-        <p className="mt-1 text-sm text-gray-600">
-          Sending to: {selectedPeerUsername}
+        <p className="mt-1 text-sm text-text-muted">
+          Sending to: <span className="font-medium text-primary">{selectedPeerUsername}</span>
         </p>
       )}
 
-      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+      {error && <p className="mt-1 text-sm text-error">{error}</p>}
 
       {showDropdown && filteredPeers.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-1 bg-foreground border border-border rounded-lg shadow-elevation-2 max-h-60 overflow-y-auto animate-fade-in">
           {filteredPeers.map((peer) => (
             <div
               key={peer.publicKey}
-              className="p-2 hover:bg-gray-50 border-b last:border-b-0"
+              className="p-2 hover:bg-card-highlight border-b border-border last:border-b-0"
             >
               {editingNickname === peer.publicKey ? (
                 <div className="flex items-center gap-2">
@@ -190,22 +193,24 @@ export const RecipientInput: React.FC<Props> = ({ onRecipientSelect, recentPeers
                     value={nicknameInput}
                     onChange={(e) => setNicknameInput(e.target.value)}
                     placeholder="Enter nickname"
-                    className="flex-1 p-1 border rounded"
+                    className="input flex-1 py-1 text-sm bg-card-highlight border-border"
                     autoFocus
                   />
                   <button
                     onClick={() => handleSetNickname(peer.publicKey)}
-                    className="p-1 hover:bg-blue-100 rounded-full"
+                    className="p-1 bg-gradient-primary rounded-lg"
                     type="button"
+                    aria-label="Save nickname"
                   >
-                    <Check className="w-4 h-4 text-blue-500" />
+                    <Check className="w-4 h-4 text-white" />
                   </button>
                   <button
                     onClick={() => setEditingNickname(null)}
-                    className="p-1 hover:bg-gray-100 rounded-full"
+                    className="p-1 hover:bg-card-highlight rounded-lg"
                     type="button"
+                    aria-label="Cancel"
                   >
-                    <X className="w-4 h-4 text-gray-500" />
+                    <X className="w-4 h-4 text-text-muted" />
                   </button>
                 </div>
               ) : (
@@ -215,10 +220,10 @@ export const RecipientInput: React.FC<Props> = ({ onRecipientSelect, recentPeers
                     className="flex-1 text-left"
                     type="button"
                   >
-                    <p className="font-medium">
-                      {peer.nickname || peer.username || peer.publicKey.slice(0, 8)}...
+                    <p className="font-medium text-text">
+                      {peer.nickname || peer.username || `${peer.publicKey.slice(0, 8)}...`}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-text-muted">
                       {peer.publicKey.slice(0, 4)}...{peer.publicKey.slice(-4)}
                     </p>
                   </button>
@@ -227,11 +232,12 @@ export const RecipientInput: React.FC<Props> = ({ onRecipientSelect, recentPeers
                       setEditingNickname(peer.publicKey);
                       setNicknameInput(peer.nickname || '');
                     }}
-                    className="p-1 hover:bg-gray-100 rounded-full ml-2"
+                    className="p-1 hover:bg-card-highlight rounded-lg ml-2"
                     title="Set nickname"
                     type="button"
+                    aria-label="Set nickname"
                   >
-                    <Edit2 className="w-4 h-4 text-gray-400" />
+                    <Edit2 className="w-4 h-4 text-text-muted" />
                   </button>
                 </div>
               )}

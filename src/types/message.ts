@@ -4,6 +4,7 @@ export interface Message {
   senderUsername?: string;
   recipient: string;
   content: string;
+  encrypted?: string; // Added encrypted content
   nonce: string;
   timestamp: number;
   fileUrl?: string;
