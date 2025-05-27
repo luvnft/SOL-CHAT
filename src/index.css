@@ -4,40 +4,49 @@
 
 @layer base {
   :root {
-    --color-primary: 59 130 246; /* blue-500 */
-    --color-primary-dark: 37 99 235; /* blue-600 */
-    --color-secondary: 20 241 149; /* solana green */
-    --color-secondary-dark: 16 185 129; /* emerald-600 */
-    --color-background: 249 250 251; /* gray-50 */
-    --color-foreground: 255 255 255; /* white */
-    --color-text: 17 24 39; /* gray-900 */
-    --color-text-muted: 107 114 128; /* gray-500 */
-    --color-border: 229 231 235; /* gray-200 */
+    /* OnlyFans-inspired color palette */
+    --color-primary: 0 175 240; /* OnlyFans Blue - #00AFF0 */
+    --color-primary-dark: 0 140 210; /* Darker blue */
+    --color-secondary: 255 0 127; /* Hot Pink - #FF007F */
+    --color-secondary-dark: 220 0 100; /* Darker pink */
+    --color-accent: 192 132 252; /* Lavender Purple - #C084FC */
+    --color-accent-dark: 160 100 220; /* Darker purple */
+    --color-warmth: 255 140 105; /* Peachy Coral - #FF8C69 */
+    --color-background: 255 248 243; /* Cream White - #FFF8F3 */
+    --color-foreground: 255 255 255; /* Pure white for cards */
+    --color-text: 14 14 14; /* Rich Black - #0E0E0E */
+    --color-text-muted: 100 100 100; /* Muted text */
+    --color-border: 230 230 230; /* Light borders */
     --color-success: 34 197 94; /* green-500 */
     --color-error: 239 68 68; /* red-500 */
     --color-warning: 245 158 11; /* amber-500 */
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(to right, rgb(0, 175, 240), rgb(255, 0, 127));
+    --gradient-secondary: linear-gradient(to right, rgb(255, 0, 127), rgb(192, 132, 252));
+    --gradient-tertiary: linear-gradient(to right, rgb(192, 132, 252), rgb(255, 140, 105));
   }
 
   .dark {
-    /* Solana-themed colors based on the example */
-    --color-primary: 20 241 149; /* Solana green */
-    --color-primary-dark: 16 185 129; /* Darker green */
-    --color-secondary: 111 114 245; /* Solana purple */
-    --color-secondary-dark: 80 70 230; /* Darker purple */
-    --color-background: 13 13 13; /* Almost black */
-    --color-foreground: 24 24 24; /* Dark gray for cards */
-    --color-card-highlight: 35 35 35; /* Slightly lighter gray for hover/active states */
-    --color-text: 255 255 255; /* White text */
-    --color-text-muted: 170 170 170; /* Light gray text */
-    --color-border: 40 40 40; /* Dark border */
-    --color-success: 20 241 149; /* Solana green */
-    --color-error: 239 68 68; /* Red */
-    --color-warning: 245 158 11; /* Amber */
+    /* Dark mode - more intense version */
+    --color-primary: 0 200 255; /* Brighter blue */
+    --color-primary-dark: 0 175 240; /* OnlyFans Blue */
+    --color-secondary: 255 20 147; /* Vivid pink */
+    --color-secondary-dark: 255 0 127; /* Hot Pink */
+    --color-accent: 200 150 255; /* Brighter purple */
+    --color-accent-dark: 192 132 252; /* Lavender Purple */
+    --color-warmth: 255 160 120; /* Brighter coral */
+    --color-background: 14 14 14; /* Rich Black - #0E0E0E */
+    --color-foreground: 30 30 30; /* Dark cards */
+    --color-card-highlight: 50 50 50; /* Hover states */
+    --color-text: 255 248 243; /* Cream White - #FFF8F3 */
+    --color-text-muted: 180 180 180; /* Light muted */
+    --color-border: 60 60 60; /* Dark borders */
 
-    /* Gradient colors based on the logo */
-    --gradient-primary: linear-gradient(to right, rgb(111, 114, 245), rgb(20, 241, 149));
-    --gradient-secondary: linear-gradient(to right, rgb(149, 76, 233), rgb(86, 171, 228));
-    --gradient-tertiary: linear-gradient(to right, rgb(86, 171, 228), rgb(20, 241, 149));
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(to right, rgb(0, 200, 255), rgb(255, 20, 147));
+    --gradient-secondary: linear-gradient(to right, rgb(255, 20, 147), rgb(200, 150, 255));
+    --gradient-tertiary: linear-gradient(to right, rgb(200, 150, 255), rgb(255, 160, 120));
   }
 
   html {
@@ -60,14 +69,14 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-slate-600 rounded-full;
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-slate-500;
+    @apply bg-gray-400 dark:bg-gray-500;
   }
 
-  /* Transitions for dark mode */
+  /* Smooth transitions */
   .transition-colors,
   .transition-all {
     transition-duration: 200ms;
@@ -84,11 +93,19 @@
   }
 
   .btn-secondary {
-    @apply bg-secondary text-slate-900 hover:bg-secondary-dark focus:ring-secondary/50;
+    @apply bg-secondary text-white hover:bg-secondary-dark focus:ring-secondary/50;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-white hover:bg-accent-dark focus:ring-accent/50;
+  }
+
+  .btn-warmth {
+    @apply bg-warmth text-white hover:bg-opacity-90 focus:ring-warmth/50;
   }
 
   .btn-outline {
-    @apply border border-border bg-transparent hover:bg-gray-50 dark:hover:bg-slate-700 focus:ring-gray-500/50;
+    @apply border border-border bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 focus:ring-gray-500/50;
   }
 
   .btn-icon {
@@ -103,8 +120,28 @@
     @apply bg-foreground rounded-lg shadow-sm border border-border overflow-hidden;
   }
 
+  .card-hover {
+    @apply transition-transform hover:scale-[1.02] hover:shadow-md;
+  }
+
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .badge-secondary {
+    @apply bg-secondary/10 text-secondary;
+  }
+
+  .badge-accent {
+    @apply bg-accent/10 text-accent;
+  }
+
+  .badge-warmth {
+    @apply bg-warmth/10 text-warmth;
   }
 
   .badge-success {
@@ -119,7 +156,9 @@
     @apply bg-warning/10 text-warning;
   }
 
-  .badge-info {
-    @apply bg-primary/10 text-primary;
+  /* Special gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
   }
 }
