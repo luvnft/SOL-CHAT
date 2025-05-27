@@ -137,18 +137,18 @@ function MessengerApp() {
 
   if (!publicKey) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-background">
         <div className="flex flex-col items-center mb-8">
           <img src="/logo.png" alt="SOL-CHAT Logo" className="w-32 h-auto mb-4" />
-          <h1 className="text-4xl font-bold text-text mb-2">
-            SOL-CHAT
+          <h1 className="mb-2 text-4xl font-bold text-text">
+            🌊 WATAA.MENU
           </h1>
           <p className="text-text-muted">
-            Secure messaging on Solana
+            Secure messaging on Solana Powered By $WATAA Tips
           </p>
         </div>
 
-        <div className="card p-8 max-w-md w-full text-center space-y-6 animate-fade-in shadow-elevation-2 border-border">
+        <div className="w-full max-w-md p-8 space-y-6 text-center card animate-fade-in shadow-elevation-2 border-border">
           <h2 className="text-2xl font-bold text-text">
             Welcome
           </h2>
@@ -181,12 +181,12 @@ function MessengerApp() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="bg-foreground shadow-sm p-4 border-b border-border">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="p-4 border-b shadow-sm bg-foreground border-border">
+        <div className="flex items-center justify-between mx-auto max-w-7xl">
           <div className="flex items-center space-x-3">
-            <img src="/logo.png" alt="SOL-CHAT Logo" className="h-8 w-auto" />
-            <h1 className="text-xl font-bold text-text">SOL-CHAT</h1>
+            <img src="/logo.png" alt="WATAA.MENU Logo" className="w-auto h-8" />
+            <h1 className="text-xl font-bold text-text">🌊 WATAA.MENU</h1>
           </div>
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center space-x-2 bg-card-highlight px-3 py-1.5 rounded-lg">
@@ -196,7 +196,7 @@ function MessengerApp() {
             </div>
             <button
               onClick={() => setShowPeers(!showPeers)}
-              className="btn-icon hover:bg-card-highlight rounded-lg"
+              className="rounded-lg btn-icon hover:bg-card-highlight"
               aria-label="Show peers"
             >
               <Users className="w-5 h-5 text-text-muted" />
@@ -207,37 +207,37 @@ function MessengerApp() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full my-6 flex flex-col md:flex-row gap-6 p-4">
-        <div className="flex-1 flex flex-col space-y-6">
+      <main className="flex flex-col flex-1 w-full gap-6 p-4 mx-auto my-6 max-w-7xl md:flex-row">
+        <div className="flex flex-col flex-1 space-y-6">
           {/* Quick Actions */}
-          <div className="card shadow-elevation-2 p-5 border-border">
-            <h2 className="font-semibold text-text mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-5 card shadow-elevation-2 border-border">
+            <h2 className="mb-4 font-semibold text-text">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               <button
-                className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors relative"
+                className="relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80"
                 onClick={() => alert("This feature is coming soon!")}
               >
-                <div className="bg-gradient-primary p-2 rounded-lg mb-2">
+                <div className="p-2 mb-2 rounded-lg bg-gradient-primary">
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium">New Chat</span>
                 <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-primary text-white rounded-full">Soon</span>
               </button>
               <button
-                className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors relative"
+                className="relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80"
                 onClick={() => alert("This feature is coming soon!")}
               >
-                <div className="bg-gradient-secondary p-2 rounded-lg mb-2">
+                <div className="p-2 mb-2 rounded-lg bg-gradient-secondary">
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium">My Contacts</span>
                 <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-secondary text-white rounded-full">Soon</span>
               </button>
               <button
-                className="flex flex-col items-center justify-center p-4 rounded-lg bg-card-highlight hover:bg-opacity-80 transition-colors relative"
+                className="relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80"
                 onClick={() => alert("This feature is coming soon!")}
               >
-                <div className="bg-gradient-tertiary p-2 rounded-lg mb-2">
+                <div className="p-2 mb-2 rounded-lg bg-gradient-tertiary">
                   <MessageCircle className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium">Messages</span>
@@ -247,7 +247,7 @@ function MessengerApp() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 card shadow-elevation-2 flex flex-col border-border">
+          <div className="flex flex-col flex-1 card shadow-elevation-2 border-border">
             <div className="p-4 border-b border-border">
               <h2 className="font-semibold text-text">Messages</h2>
             </div>
@@ -263,8 +263,8 @@ function MessengerApp() {
         </div>
 
         <div className={`w-full md:w-80 card shadow-elevation-2 overflow-hidden border-border ${showPeers ? 'animate-slide-in' : 'hidden'}`}>
-          <div className="p-4 bg-foreground border-b border-border">
-            <div className="flex justify-between items-center">
+          <div className="p-4 border-b bg-foreground border-border">
+            <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="bg-gradient-secondary p-1.5 rounded-lg">
                   <Users className="w-4 h-4 text-white" />
@@ -273,7 +273,7 @@ function MessengerApp() {
               </div>
               <button
                 onClick={() => setShowPeers(false)}
-                className="md:hidden p-1 rounded-lg hover:bg-card-highlight"
+                className="p-1 rounded-lg md:hidden hover:bg-card-highlight"
               >
                 <X className="w-5 h-5 text-text-muted" />
               </button>

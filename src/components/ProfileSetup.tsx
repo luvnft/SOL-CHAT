@@ -54,28 +54,28 @@ export const ProfileSetup: React.FC<Props> = ({ publicKey, onComplete }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-10 h-10 border-b-2 rounded-full animate-spin border-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-background">
       <div className="flex flex-col items-center mb-8">
         <img src="/logo.png" alt="SOL-CHAT Logo" className="w-32 h-auto mb-4" />
-        <h1 className="text-4xl font-bold text-text mb-2">
-          SOL-CHAT
+        <h1 className="mb-2 text-4xl font-bold text-text">
+          🌊 WATAA.MENU
         </h1>
         <p className="text-text-muted">
-          Secure messaging on Solana
+          Secure messaging on Solana Powered By $WATAA Tips
         </p>
       </div>
 
-      <div className="card p-8 max-w-md w-full shadow-elevation-2 animate-fade-in border-border">
-        <div className="text-center mb-6">
+      <div className="w-full max-w-md p-8 card shadow-elevation-2 animate-fade-in border-border">
+        <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-text">Set Your Username</h2>
-          <p className="text-text-muted mt-2">
+          <p className="mt-2 text-text-muted">
             Choose a username that other users will see when you message them.
           </p>
         </div>
@@ -100,7 +100,7 @@ export const ProfileSetup: React.FC<Props> = ({ publicKey, onComplete }) => {
 
           <button
             type="submit"
-            className="w-full py-3 px-4 rounded-lg font-medium bg-gradient-tertiary text-white hover:opacity-90 transition-opacity"
+            className="w-full px-4 py-3 font-medium text-white transition-opacity rounded-lg bg-gradient-tertiary hover:opacity-90"
           >
             Save Username
           </button>
