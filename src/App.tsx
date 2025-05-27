@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { PublicKey } from '@solana/web3.js';
@@ -8,7 +8,7 @@ import { PeerList } from './components/PeerList';
 import { ProfileSetup } from './components/ProfileSetup';
 import { WalletContextProvider } from './components/WalletContextProvider';
 import { ThemeToggle, useTheme } from './components/ThemeProvider';
-import { MessageCircle, Users, Loader2, X } from 'lucide-react';
+import { MessageCircle, Users, X } from 'lucide-react';
 import { uploadFile, storeMessages, retrieveMessages } from './lib/storage';
 import { encryptMessage } from './lib/crypto';
 import { addRecentPeer, getRecentPeers, getAddressActivity } from './lib/peers';
@@ -24,7 +24,6 @@ function MessengerApp() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recentPeers, setRecentPeers] = useState<Peer[]>([]);
 
-  // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
       if (publicKey) {
@@ -34,10 +33,8 @@ function MessengerApp() {
         const peers = await getRecentPeers();
         setRecentPeers(peers);
 
-        // Load messages from local storage
         const storedMessages = await retrieveMessages(null);
         if (storedMessages.length > 0) {
-          // Filter messages for the current user
           const userMessages = storedMessages.filter(
             msg => msg.sender === publicKey.toString() || msg.recipient === publicKey.toString()
           );
@@ -48,7 +45,6 @@ function MessengerApp() {
     loadInitialData();
   }, [publicKey]);
 
-  // Poll for message status updates
   useEffect(() => {
     if (!publicKey || !connection) return;
 
@@ -62,14 +58,20 @@ function MessengerApp() {
                 return { ...message, status: 'delivered' };
               }
             } catch {
-              // Keep existing status if check fails
+              // Silently ignore failure
             }
           }
           return message;
         })
       );
 
-      if (JSON.stringify(updatedMessages) !== JSON.stringify(messages)) {
+      const messagesChanged = JSON.stringify(
+        messages.map(({ timestamp, ...rest }) => rest)
+      ) !== JSON.stringify(
+        updatedMessages.map(({ timestamp, ...rest }) => rest)
+      );
+
+      if (messagesChanged) {
         setMessages(updatedMessages);
         await storeMessages(updatedMessages);
       }
@@ -89,12 +91,8 @@ function MessengerApp() {
         fileName = file.name;
       }
 
-      // For demo purposes, we'll use a simplified approach
-      // In a real app, we would use proper key derivation
       const messageSignature = await signMessage(new TextEncoder().encode('Sign to encrypt message'));
 
-      // Generate a deterministic key from the signature
-      // This is a simplified approach for demo purposes
       const { encrypted, nonce } = await encryptMessage(
         content,
         messageSignature,
@@ -106,8 +104,8 @@ function MessengerApp() {
         sender: publicKey.toString(),
         senderUsername: profile.username,
         recipient: recipientPublicKey,
-        content: content, // Store unencrypted for demo
-        encrypted, // Store encrypted version
+        content,
+        encrypted,
         nonce,
         timestamp: Date.now(),
         fileUrl,
@@ -115,21 +113,15 @@ function MessengerApp() {
         status: 'sent'
       };
 
-      // Update messages state immediately
       const updatedMessages = [...messages, newMessage];
       setMessages(updatedMessages);
-
-      // Store messages
       await storeMessages(updatedMessages);
 
-      // Update recent peers
       await addRecentPeer(recipientPublicKey);
       const updatedPeers = await getRecentPeers();
       setRecentPeers(updatedPeers);
-
     } catch (error) {
       console.error('Error sending message:', error);
-      throw error;
     }
   };
 
@@ -140,18 +132,17 @@ function MessengerApp() {
       <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-background">
         <div className="flex flex-col items-center mb-8">
           <img src="/logo.png" alt="SOL-CHAT Logo" className="w-32 h-auto mb-4" />
-          <h1 className="mb-2 text-4xl font-bold text-text">
-            🌊 WATAA.MENU
-          </h1>
-          <p className="text-text-muted">
-            Secure messaging on Solana Powered By $WATAA Tips
+          <h1 className="mb-2 text-4xl font-bold text-text">WATAA.MENU</h1>
+                      <p className="text-center text-text-muted">
+            Secure messaging on Solana Powered By <a href="https://pump.fun/coin/DKrZp2YpejxEFzpS9B5cRyr6U28zoNfHWX4pijTcpump" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">$WATAA</a> Tips<br /><br />
+
+            🌊 <a href="https://twerk.dance" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">TWERK.DANCE</a> livestream menu<br />
+            🌊 Tip privately
           </p>
         </div>
 
         <div className="w-full max-w-md p-8 space-y-6 text-center card animate-fade-in shadow-elevation-2 border-border">
-          <h2 className="text-2xl font-bold text-text">
-            Welcome
-          </h2>
+          <h2 className="text-2xl font-bold text-text">Welcome</h2>
           <p className="text-text-muted">
             Connect your wallet to start messaging securely with other users.
           </p>
@@ -174,7 +165,10 @@ function MessengerApp() {
         </div>
         <ProfileSetup
           publicKey={publicKey.toString()}
-          onComplete={() => window.location.reload()}
+          onComplete={async () => {
+            const userProfile = await getLocalProfile();
+            setProfile(userProfile);
+          }}
         />
       </div>
     );
@@ -209,56 +203,37 @@ function MessengerApp() {
 
       <main className="flex flex-col flex-1 w-full gap-6 p-4 mx-auto my-6 max-w-7xl md:flex-row">
         <div className="flex flex-col flex-1 space-y-6">
-          {/* Quick Actions */}
           <div className="p-5 card shadow-elevation-2 border-border">
             <h2 className="mb-4 font-semibold text-text">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <button
-                className="relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80"
-                onClick={() => alert("This feature is coming soon!")}
-              >
-                <div className="p-2 mb-2 rounded-lg bg-gradient-primary">
-                  <Users className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-sm font-medium">New Chat</span>
-                <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-primary text-white rounded-full">Soon</span>
-              </button>
-              <button
-                className="relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80"
-                onClick={() => alert("This feature is coming soon!")}
-              >
-                <div className="p-2 mb-2 rounded-lg bg-gradient-secondary">
-                  <Users className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-sm font-medium">My Contacts</span>
-                <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-secondary text-white rounded-full">Soon</span>
-              </button>
-              <button
-                className="relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80"
-                onClick={() => alert("This feature is coming soon!")}
-              >
-                <div className="p-2 mb-2 rounded-lg bg-gradient-tertiary">
-                  <MessageCircle className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-sm font-medium">Messages</span>
-                <span className="absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-tertiary text-white rounded-full">Soon</span>
-              </button>
+              {[
+                { label: 'New Chat', icon: <Users />, tag: 'primary' },
+                { label: 'My Contacts', icon: <Users />, tag: 'secondary' },
+                { label: 'Messages', icon: <MessageCircle />, tag: 'tertiary' },
+              ].map(({ label, icon, tag }) => (
+                <button
+                  key={label}
+                  className={`relative flex flex-col items-center justify-center p-4 transition-colors rounded-lg bg-card-highlight hover:bg-opacity-80`}
+                  onClick={() => alert("This feature is coming soon!")}
+                >
+                  <div className={`p-2 mb-2 rounded-lg bg-gradient-${tag}`}>
+                    {React.cloneElement(icon, { className: "w-5 h-5 text-white" })}
+                  </div>
+                  <span className="text-sm font-medium">{label}</span>
+                  <span className={`absolute top-2 right-2 text-xs px-1.5 py-0.5 bg-gradient-${tag} text-white rounded-full`}>
+                    Soon
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Messages */}
           <div className="flex flex-col flex-1 card shadow-elevation-2 border-border">
             <div className="p-4 border-b border-border">
               <h2 className="font-semibold text-text">Messages</h2>
             </div>
-            <MessageList
-              messages={messages}
-              currentWallet={publicKey.toString()}
-            />
-            <MessageInput
-              onSendMessage={handleSendMessage}
-              recentPeers={recentPeers}
-            />
+            <MessageList messages={messages} currentWallet={publicKey.toString()} />
+            <MessageInput onSendMessage={handleSendMessage} recentPeers={recentPeers} />
           </div>
         </div>
 
